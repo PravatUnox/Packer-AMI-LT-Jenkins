@@ -1,0 +1,59 @@
+-- first launch the ubuntu instance with t2.medium
+-- then install java 17,awscli,jenkins and packer
+--  after than login to Jenkins the configure GitHub pipeline
+--  create the tg,launch template, laodbalancer and asg
+-- change the values in packer.pkr.hcl file 
+then build the pipe line 
+
+
+======================= Packer install =====================
+
+# Add HashiCorp GPG key
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+
+# Add official HashiCorp Linux repository
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+
+# Update and install packer
+sudo apt update && sudo apt install packer
+
+
+========================= aws cli =======================
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+sudo apt-get install unzip -y
+unzip awscliv2.zip
+sudo ./aws/install
+
+=========================jenkins===============================
+
+
+sudo apt update && sudo apt upgrade -y
+sudo apt install openjdk-17-jdk -y
+
+java -version
+
+curl -fsSL https://pkg.jenkins.io/debian/jenkins.io-2023.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+sudo apt update
+
+sudo apt install jenkins -y
+
+
+wget https://pkg.jenkins.io/debian-stable/binary/jenkins_2.414.1_all.deb
+sudo dpkg -i jenkins_2.414.1_all.deb
+sudo apt -f install -y
+
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+sudo systemctl status jenkins --no-pager
+
+echo -e "\nJenkins initial admin password:"
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+==================================================================================
